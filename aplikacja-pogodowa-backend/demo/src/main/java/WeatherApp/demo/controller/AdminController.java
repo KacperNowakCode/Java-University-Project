@@ -4,10 +4,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class HelloWorldController {
+public class AdminController {
 
-    @GetMapping("/")
-    public String helloWorld() {
-        return "Hello World";
+    @GetMapping("/admin")
+    public String adminData()
+    {
+        return "This many users visited site: ...";
     }
 }
