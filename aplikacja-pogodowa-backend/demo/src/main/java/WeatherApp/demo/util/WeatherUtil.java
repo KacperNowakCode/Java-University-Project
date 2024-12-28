@@ -8,10 +8,8 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
+import java.time.LocalTime;
 
 
 @Component
@@ -68,33 +66,27 @@ public class WeatherUtil {
             JSONObject resultJsonObj = (JSONObject) parser.parse(resultJson.toString());
 
             JSONObject daily = (JSONObject) resultJsonObj.get("daily");
+            JSONObject hourly = (JSONObject) resultJsonObj.get("hourly");
             JSONArray maxTemps = (JSONArray) daily.get("temperature_2m_max");
             JSONArray minTemps = (JSONArray) daily.get("temperature_2m_min");
             JSONArray weatherCodes = (JSONArray) daily.get("weather_code");
-            JSONArray sunshineDurations = (JSONArray) daily.get("sunshine_duration");
+            JSONArray hourlyTemps = (JSONArray) hourly.get("temperature_2m");
+            JSONArray hourlyWeatherCode = (JSONArray) hourly.get("weather_code");
 
 
             double weeklyMax = calculateMax(maxTemps);
             double weeklyMin = calculateMin(minTemps);
-            double avgSunshine = calculateAverage(sunshineDurations) / 3600;
-            double avgPressure = calculateAveragePressure(resultJsonObj);
             int mostCommonWeatherCode = getMostFrequentWeatherCode(weatherCodes);
-
-            double sunshineHours = (double) ((JSONArray) daily.get("sunshine_duration")).get(0)/3600;
-            double generatedEnergy = 2.5 * sunshineHours * 0.2;
-            double generatedEnergyWeekly = 2.5 * avgSunshine* 7 * 0.2;
-
             JSONObject weeklySummary = new JSONObject();
-            weeklySummary.put("daily_generated_energy", generatedEnergy);
-            weeklySummary.put("weekly_generated_energy", generatedEnergyWeekly);
-            weeklySummary.put("sunshineHours", sunshineHours);
+
+
             weeklySummary.put("daily_max_temperature", ((JSONArray) daily.get("temperature_2m_max")).get(0));
             weeklySummary.put("daily_min_temperature", ((JSONArray) daily.get("temperature_2m_min")).get(0));
             weeklySummary.put("weekly_max_temperature", weeklyMax);
             weeklySummary.put("weekly_min_temperature", weeklyMin);
-            weeklySummary.put("average_sunshine_hours", avgSunshine);
-            weeklySummary.put("average_surface_pressure", avgPressure);
             weeklySummary.put("most_common_weather_code", mostCommonWeatherCode);
+            weeklySummary.put("temperature_hourly", cutArray(hourlyTemps));
+            weeklySummary.put("weatherCode_hourly", cutArray(hourlyWeatherCode));
 
             return weeklySummary;
 
@@ -104,12 +96,27 @@ public class WeatherUtil {
         }
     }
 
+    public static JSONArray cutArray(JSONArray hourly) {
+        List<Object> tempList = new ArrayList<>();
+        for (int i = 0; i < 24; i++) {
+            tempList.add(hourly.get(i));
+        }
+        JSONArray hourlyTemps = new JSONArray();
+        hourlyTemps.addAll(tempList);
+        return hourlyTemps;
+    }
+
+
     private static double calculateMax(JSONArray array) {
         double max = Double.MIN_VALUE;
         for (Object obj : array) {
             max = Math.max(max, (double) obj);
         }
         return max;
+    }
+
+    public static int getHour(){
+        return LocalTime.now().getHour();
     }
 
 
@@ -129,14 +136,6 @@ public class WeatherUtil {
         return sum / array.size();
     }
 
-    private static double calculateAveragePressure(JSONObject resultJsonObj) {
-        JSONObject hourly = (JSONObject) resultJsonObj.get("hourly");
-        if (!hourly.containsKey("surface_pressure")) {
-            throw new RuntimeException("Surface pressure data is missing.");
-        }
-        JSONArray pressures = (JSONArray) hourly.get("surface_pressure");
-        return calculateAverage(pressures);
-    }
 
     private static Integer getMostFrequentWeatherCode(JSONArray weatherCodes) {
         Map<Long, Integer> frequencyMap = new HashMap<>();
