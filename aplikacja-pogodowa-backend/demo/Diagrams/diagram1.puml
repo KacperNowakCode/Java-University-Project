@@ -1,0 +1,46 @@
+@startuml
+
+package "WeatherApp.demo" {
+
+  class DemoApplication {
+    + main(String[] args)
+  }
+
+  package controller {
+    class WeatherController {
+      + getWeather(String location) : JSONObject
+    }
+
+    class AdminController {
+      + getAdminInfo() : Map
+    }
+  }
+
+  package service {
+    class WeatherService {
+      + getWeatherData(String locationName) : JSONObject
+    }
+  }
+
+  package util {
+    class WeatherUtil {
+      + getLocationData(String locationName) : JSONArray
+    }
+  }
+
+  package config {
+    class SecurityConfig {
+      + configure(HttpSecurity http)
+    }
+
+    class WebConfig {
+      + corsConfigurer() : WebMvcConfigurer
+    }
+  }
+}
+
+' Relationships
+WeatherController --> WeatherService : uses
+WeatherService --> WeatherUtil : uses
+
+@enduml

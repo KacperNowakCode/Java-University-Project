@@ -1,0 +1,8 @@
+@startuml
+' Sequence Diagram for Admin
+actor Admin
+Admin -> AdminController : getAdminInfo()
+AdminController -> SecurityConfig : Validate admin access
+AdminController --> Admin : Admin details as Map
+@enduml
+

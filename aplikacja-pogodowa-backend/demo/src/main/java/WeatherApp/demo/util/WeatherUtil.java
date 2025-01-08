@@ -152,7 +152,7 @@ public class WeatherUtil {
         return Collections.max(frequencyMap.values());
     }
 
-    private static HttpURLConnection fetchApiResponse(String urlString) throws IOException {
+    static HttpURLConnection fetchApiResponse(String urlString) throws IOException {
         URL url = new URL(urlString);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");

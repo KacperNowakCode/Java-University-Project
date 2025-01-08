@@ -1,0 +1,12 @@
+@startuml
+' Sequence Diagram for User
+actor User
+User -> WeatherController : GET /api/weather/{location}
+WeatherController -> WeatherService : getWeatherData(location)
+WeatherService -> WeatherUtil : getLocationData(location)
+WeatherUtil --> WeatherService : JSONArray with location data
+WeatherService -> WeatherService : fetchWeatherFromAPI(location)
+WeatherService -> WeatherService : processWeatherData(rawData)
+WeatherService --> WeatherController : JSONObject with weather data
+WeatherController --> User : 200 OK, JSONObject with weather details
+@enduml
