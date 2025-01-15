@@ -1,0 +1,13 @@
+@startuml
+actor User
+participant "Frontend" as Frontend
+participant "Backend" as Backend
+participant "APIs" as API
+
+User -> Frontend : Request current weather \n      (String cityName)
+Frontend -> Backend : Send request for current weather
+Backend -> API : Ask geographial api for geolocation data,\n Fetch weather data for location
+API --> Backend : Return weather data in JSON format
+Backend --> Frontend : Send weather data in JSON to app
+Frontend --> User : Display current weather\n(float temperature, humidity, etc)
+@enduml

@@ -1,0 +1,19 @@
+@startuml
+actor User
+participant "Frontend" as Frontend
+participant "Backend" as Backend
+participant "APIs" as API
+
+User -> Frontend : Request data \n(String cityName)
+Frontend -> Backend : Send request for data
+Backend -> API : Ask geographical API for geolocation data,\nFetch weather data for location
+API --> Backend : Return weather data in JSON format
+activate Backend
+Backend -> Backend : Check if temperature < 0
+alt Temperature < 0
+    Backend -> Frontend : Send alert notification \n("Temperature below zero!")
+end
+Backend --> Frontend : Send weather data in JSON to app
+deactivate Backend
+Frontend --> User : Display weekly weather for next 24h\n(float avgTemperature, most frequent weather code, etc)
+@enduml

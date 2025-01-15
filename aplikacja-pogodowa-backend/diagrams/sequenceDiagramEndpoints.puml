@@ -1,0 +1,9 @@
+@startuml
+actor Admin
+
+participant "Backend" as Backend
+
+Admin -> "Backend" : Update endpoint configuration
+Backend -> Backend : Check functionality
+
+@enduml

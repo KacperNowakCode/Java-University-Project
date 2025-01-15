@@ -1,0 +1,15 @@
+@startuml
+left to right direction
+actor User as U
+actor Admin as A
+
+U --> (View Current Weather)
+U --> (Check Hourly Forecast)
+U --> (Check 7-Day Forecast)
+U --> (Receive Weather Alerts)
+
+
+'A --> (Access statistics data)
+'A --> (Configure endpoints)
+@enduml
+

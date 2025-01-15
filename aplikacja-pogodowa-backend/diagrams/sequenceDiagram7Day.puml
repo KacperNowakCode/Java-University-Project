@@ -1,0 +1,13 @@
+@startuml
+actor User
+participant "Frontend " as Frontend
+participant "Backend" as Backend
+participant "APIs" as API
+
+User -> Frontend : Request weekly weather \n      (String cityName)
+Frontend -> Backend : Send request for weekly weather
+Backend -> API : Ask geographial api for geolocation data,\n Fetch weather data for location
+API --> Backend : Return weather data in JSON format
+Backend --> Frontend : Send weather data in JSON to app
+Frontend --> User : Display weekly weather for next 24h\n(float avgTemperature, most frequent weather code, etc)
+@enduml
